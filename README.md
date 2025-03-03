@@ -1,79 +1,108 @@
-# Address Normalization Project
+# Address Parser
+
+A batch processing tool that uses Azure OpenAI to parse addresses into structured components.
 
 ## Overview
 
-This repo is designed to normalize address data using Azure OpenAI's language model. 
-It processes input data, sends it to the model for normalization, and then post-processes the output to ensure data integrity and consistency.
+This tool takes addresses from a CSV file and uses Azure OpenAI's language models to parse them into components like house number, road, city, etc. It processes addresses in batches for efficiency and saves the results to a new CSV file.
 
-## Features
+## Prerequisites
 
-- Load address data from CSV files.
-- Normalize addresses using Azure OpenAI.
-- Post-process the normalized data to merge duplicate entries.
-- Save processed data to new CSV files.
-
-## Requirements
-
-- Python 3.7 or higher
-- Required Python packages:
+- Python 3.8+
+- Azure OpenAI API access
+- Required Python packages (install via `pip install -r src/requirements.txt`):
   - pandas
   - pyyaml
+  - python-dotenv
+  - azure-ai-inference
   - openai
-  - unidecode
-  - tqdm
 
-## Setup
+## Configuration
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/streetnamematcher/address-normalization.git
-   cd address-normalization
-   ```
+### Environment Variables
 
-2. **Install the required packages:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+Create an `azure.env` file with your Azure OpenAI credentials:
 
-3. **Set up environment variables:**
-   Create a file named `set_env_variable.sh` and add your Azure OpenAI endpoint and key:
-   ```bash
-   #!/bin/bash
-   export AZURE_OPENAI_ENDPOINT="your-endpoint"
-   export AZURE_OPENAI_KEY="your-key"
-   ```
-
-4. **Configure the YAML file:**
-   Edit `src/config.yml` to set the appropriate parameters for your data processing, including the sampling run ID, input file paths, and output configurations.
-
-## Running the Scripts
-
-1. **Run the normalizer:**
-   To normalize the address data, execute the following command:
-   ```bash
-   ./run_normalizer.sh
-   ```
-
-2. **Post-process the normalized data:**
-   After normalization, run the post-processing script to clean up the data:
-   ```bash
-   ./run_post_process.sh
-   ```
-
-## File Structure
-```
-├── src
-│ ├── config.yml
-│ ├── post_process_normalized_address.py
-│ ├── sample_normalizer.py
-│ └── sample_normalizer_batch.py
-├── set_env_variable.sh
-├── run_normalizer.sh
-└── run_post_process.sh
+```env
+AZURE_OPENAI_ENDPOINT=your_azure_endpoint
+AZURE_OPENAI_KEY=your_api_key
 ```
 
-## Notes
+### Configuration File
 
-- Ensure that your Azure OpenAI credentials are correctly set in the `set_env_variable.sh` file.
-- The output files will be saved in the specified directories as defined in the `config.yml` file.
-- The post-processing script will merge duplicate entries based on the `sample_id` and update the `_merge` column accordingly.
+Create a `config_parser.yml` file with your configuration:
+
+yaml
+input_column:
+normalized_address # Column name containing addresses to parse
+components:
+house_number
+road
+city
+postcode
+state
+country
+File paths
+file_name: "path/to/input/file.csv"
+output_dir: "path/to/output/directory/"
+output_file_name: "parsed_address.csv"
+Azure OpenAI settings
+azure:
+api_version: "2024-02-15-preview"
+max_tokens: 300
+max_tokens_few_shot: 1000
+max_tokens_batch: 50000
+model: "gpt-4o-mini"
+temperature: 0.1
+token_limit: 15000
+batch_size: 50 # Number of addresses to process in each batch
+Prompts for the model
+prompts:
+system_prompt: "You are an expert address parser. Parse the given addresses into their components."
+user_prompt: "Please parse the following addresses into their components:\n\n{addresses}\n\nProvide the results in a structured format."
+```
+
+## Usage
+
+1. Install dependencies:
+
+```bash
+pip install -r src/requirements.txt
+```
+
+2. Set environment variables:
+
+```bash
+source azure.env
+```
+
+3. Run the script:
+
+```bash
+python src/sample_parser_batch.py
+```
+
+## Output
+
+
+The script will:
+- Read addresses from the configured input CSV file
+- Process them in batches through Azure OpenAI
+- Parse the responses into structured components
+- Save the results to the configured output location
+
+## Output
+
+The parser creates a new CSV file containing:
+- All original columns from the input file
+- Additional columns for each parsed address component (house_number, road, city, etc.)
+
+## Error Handling
+
+The script includes comprehensive error handling and logging:
+- Configuration loading errors
+- File access issues
+- API communication errors
+- Response parsing problems
+
+Logs are written to stdout with appropriate error levels (INFO, WARNING, ERROR).

@@ -4,3 +4,4 @@ unidecode
 pyyaml
 python-dotenv
 tqdm
+azure-ai-inference

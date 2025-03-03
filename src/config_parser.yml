@@ -1,0 +1,32 @@
+input_column:
+  - normalized_address
+
+prefix:
+  - llm
+
+components:
+  - house_number
+  - road
+  - city
+  - postcode
+  - state
+  - country
+
+file_name: "/Users/peeyush.singhal/Library/CloudStorage/OneDrive-TomTom/projects/sample-address-parser/data/20220602-0001/output/my/samples_normalized_processed.csv"
+output_dir: "/Users/peeyush.singhal/Library/CloudStorage/OneDrive-TomTom/projects/sample-address-parser/data/20220602-0001/output/my/parsed/"
+output_file_name: "parsed_address.csv"
+
+azure:
+  api_version: "2024-02-15-preview"
+  max_tokens: 300
+  max_tokens_few_shot: 1000
+  max_tokens_batch: 50000
+  model: "gpt-4o-mini"
+  temperature: 0.1
+  token_limit: 15000
+
+batch_size: 50
+
+prompts:
+  system_prompt: "You are an expert address parser. Parse the given addresses into their components."
+  user_prompt: "Please parse the following addresses into their components:\n\n{addresses}\n\nProvide the results in a structured format."

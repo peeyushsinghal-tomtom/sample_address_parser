@@ -1,6 +1,6 @@
 # Project specific
 data/
-sample_address_norm_env/
+sample_parser_env/
 
 # Python
 src/__pycache__/
