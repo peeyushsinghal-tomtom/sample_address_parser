@@ -2,4 +2,7 @@ data/
 
 sample_address_norm_env
 
+src/__pycache__
+src/.DS_Store
+
 
