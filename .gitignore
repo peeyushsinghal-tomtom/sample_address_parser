@@ -1,8 +1,18 @@
+# Project specific
 data/
+sample_address_norm_env/
 
-sample_address_norm_env
+# Python
+src/__pycache__/
+*.py[cod]
+*$py.class
 
-src/__pycache__
+# OS generated files
 src/.DS_Store
-
-
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
